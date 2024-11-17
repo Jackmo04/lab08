@@ -8,7 +8,10 @@ import it.unibo.deathnote.api.DeathNote;
 
 public class DeathNoteImplementation implements DeathNote {
 
+    private static final int DETAILS_DEADLINE_MILLIS = 640;
+    private static final int CAUSE_DEADLINE_MILLIS = 40;
     private List<DeathNoteEntry> entries;
+    private long lastWritingTimeMillis;
 
     public DeathNoteImplementation() {
         this.entries = new LinkedList<>();
@@ -26,36 +29,72 @@ public class DeathNoteImplementation implements DeathNote {
     public void writeName(String name) {
         if (!name.isBlank() && !isNameWritten(name)) {
             this.entries.add(new DeathNoteEntry(name));
+            updateWritingTime();
         }
     }
 
     @Override
     public boolean writeDeathCause(String cause) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDeathCause'");
+        if (this.entries.size() == 0) {
+            throw new IllegalStateException("No names in the Death Note");
+        }
+        if (cause == null) {
+            throw new IllegalStateException("Cause cannot be null");
+        }
+        if (!isBeforeDeadline(CAUSE_DEADLINE_MILLIS)) {
+            return false;
+        }
+        this.entries.getLast().setCause(cause);
+        updateWritingTime();
+        return true;
     }
 
     @Override
     public boolean writeDetails(String details) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDetails'");
+        if (this.entries.size() == 0) {
+            throw new IllegalStateException("No names in the Death Note");
+        }
+        if (details == null) {
+            throw new IllegalStateException("Details cannot be null");
+        }
+        if (!isBeforeDeadline(DETAILS_DEADLINE_MILLIS)) {
+            return false;
+        }
+        this.entries.getLast().setDetails(details);
+        return true;
     }
 
     @Override
     public String getDeathCause(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDeathCause'");
+        for (DeathNoteEntry entry : this.entries) {
+            if (entry.getName().equals(name)) {
+                return entry.getCause();
+            }
+        }
+        throw new IllegalArgumentException("Name is not written in the Death Note");
     }
 
     @Override
     public String getDeathDetails(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDeathDetails'");
+        for (DeathNoteEntry entry : this.entries) {
+            if (entry.getName().equals(name)) {
+                return entry.getDetails();
+            }
+        }
+        throw new IllegalArgumentException("Name is not written in the Death Note");
     }
 
     @Override
     public boolean isNameWritten(String name) {
         return this.entries.contains(new DeathNoteEntry(name));
+    }
+
+    private void updateWritingTime() {
+        this.lastWritingTimeMillis = System.currentTimeMillis();
+    }
+
+    private boolean isBeforeDeadline(int deadlineMillis) {
+        return System.currentTimeMillis() - this.lastWritingTimeMillis < deadlineMillis;
     }
 
     private class DeathNoteEntry {
@@ -78,16 +117,12 @@ public class DeathNoteImplementation implements DeathNote {
             return name;
         }
 
-        private void setName(String name) {
-            this.name = name;
-        }
-
         private String getCause() {
             return cause;
         }
 
         private void setCause(String cause) {
-            this.cause = cause;
+            this.cause = Objects.requireNonNull(cause);
         }
 
         private String getDetails() {
@@ -95,7 +130,7 @@ public class DeathNoteImplementation implements DeathNote {
         }
 
         private void setDetails(String details) {
-            this.details = details;
+            this.details = Objects.requireNonNull(details);
         }
 
         @Override

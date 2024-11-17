@@ -2,15 +2,12 @@ package it.unibo.deathnote;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.concurrent.TimeUnit;
-
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.commons.util.StringUtils;
 
 import it.unibo.deathnote.impl.DeathNoteImplementation;
 import it.unibo.deathnote.api.DeathNote;
-
-import org.junit.jupiter.api.Test;
 
 class TestDeathNote {
 
@@ -85,8 +82,8 @@ class TestDeathNote {
         dn.writeName(namePippo);
         assertEquals("heart attack", dn.getDeathCause(namePippo).toLowerCase());
         final var namePluto = "pluto";
-        dn.writeName(namePluto);
         final var dcAccident = "karting accident";
+        dn.writeName(namePluto);
         assertTrue(dn.writeDeathCause(dcAccident));
         assertEquals(dcAccident, dn.getDeathCause(namePluto).toLowerCase());
         Thread.sleep(100);
@@ -121,5 +118,4 @@ class TestDeathNote {
         assertEquals("", dn.getDeathDetails(namePluto));
     }
 
-    
 }
