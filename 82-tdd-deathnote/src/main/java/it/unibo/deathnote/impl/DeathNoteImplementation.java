@@ -1,6 +1,6 @@
 package it.unibo.deathnote.impl;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +14,7 @@ public class DeathNoteImplementation implements DeathNote {
     private long lastWritingTimeMillis;
 
     public DeathNoteImplementation() {
-        this.entries = new LinkedList<>();
+        this.entries = new ArrayList<>();
     }
 
     @Override
