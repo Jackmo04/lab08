@@ -10,32 +10,41 @@ public class DeathNoteImplementation implements DeathNote {
 
     private static final int DETAILS_DEADLINE_MILLIS = 640;
     private static final int CAUSE_DEADLINE_MILLIS = 40;
-    private List<DeathNoteEntry> entries;
+    private final List<DeathNoteEntry> entries;
     private long lastWritingTimeMillis;
 
     public DeathNoteImplementation() {
         this.entries = new ArrayList<>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getRule(int ruleNumber) {
-        if (ruleNumber < 1 || ruleNumber > DeathNote.RULES.size()) {
+    public String getRule(final int ruleNumber) {
+        if (ruleNumber < 1 || ruleNumber > RULES.size()) {
             throw new IllegalArgumentException("Rule number must be between 1 and 13");
         }
-        return DeathNote.RULES.get(ruleNumber - 1);
+        return RULES.get(ruleNumber - 1);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void writeName(String name) {
+    public void writeName(final String name) {
         if (!name.isBlank() && !isNameWritten(name)) {
             this.entries.add(new DeathNoteEntry(name));
             updateWritingTime();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean writeDeathCause(String cause) {
-        if (this.entries.size() == 0) {
+    public boolean writeDeathCause(final String cause) {
+        if (this.entries.isEmpty()) {
             throw new IllegalStateException("No names in the Death Note");
         }
         if (cause == null) {
@@ -49,9 +58,12 @@ public class DeathNoteImplementation implements DeathNote {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean writeDetails(String details) {
-        if (this.entries.size() == 0) {
+    public boolean writeDetails(final String details) {
+        if (this.entries.isEmpty()) {
             throw new IllegalStateException("No names in the Death Note");
         }
         if (details == null) {
@@ -64,9 +76,12 @@ public class DeathNoteImplementation implements DeathNote {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getDeathCause(String name) {
-        for (DeathNoteEntry entry : this.entries) {
+    public String getDeathCause(final String name) {
+        for (final DeathNoteEntry entry : this.entries) {
             if (entry.getName().equals(name)) {
                 return entry.getCause();
             }
@@ -74,9 +89,12 @@ public class DeathNoteImplementation implements DeathNote {
         throw new IllegalArgumentException("Name is not written in the Death Note");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getDeathDetails(String name) {
-        for (DeathNoteEntry entry : this.entries) {
+    public String getDeathDetails(final String name) {
+        for (final DeathNoteEntry entry : this.entries) {
             if (entry.getName().equals(name)) {
                 return entry.getDetails();
             }
@@ -84,8 +102,11 @@ public class DeathNoteImplementation implements DeathNote {
         throw new IllegalArgumentException("Name is not written in the Death Note");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean isNameWritten(String name) {
+    public boolean isNameWritten(final String name) {
         return this.entries.contains(new DeathNoteEntry(name));
     }
 
@@ -93,23 +114,23 @@ public class DeathNoteImplementation implements DeathNote {
         this.lastWritingTimeMillis = System.currentTimeMillis();
     }
 
-    private boolean isBeforeDeadline(int deadlineMillis) {
+    private boolean isBeforeDeadline(final int deadlineMillis) {
         return System.currentTimeMillis() - this.lastWritingTimeMillis < deadlineMillis;
     }
 
-    private class DeathNoteEntry {
+    private final class DeathNoteEntry {
 
         private String name;
         private String cause;
         private String details;
 
-        private DeathNoteEntry(String name, String cause, String details) {
+        private DeathNoteEntry(final String name, final String cause, final String details) {
             this.name = Objects.requireNonNull(name);
             this.cause = Objects.requireNonNull(cause);
             this.details = Objects.requireNonNull(details);
         }
 
-        private DeathNoteEntry(String name) {
+        private DeathNoteEntry(final String name) {
             this(name, "heart attack", "");
         }
 
@@ -121,7 +142,7 @@ public class DeathNoteImplementation implements DeathNote {
             return cause;
         }
 
-        private void setCause(String cause) {
+        private void setCause(final String cause) {
             this.cause = Objects.requireNonNull(cause);
         }
 
@@ -129,7 +150,7 @@ public class DeathNoteImplementation implements DeathNote {
             return details;
         }
 
-        private void setDetails(String details) {
+        private void setDetails(final String details) {
             this.details = Objects.requireNonNull(details);
         }
 
@@ -143,7 +164,7 @@ public class DeathNoteImplementation implements DeathNote {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
@@ -165,8 +186,6 @@ public class DeathNoteImplementation implements DeathNote {
             return DeathNoteImplementation.this;
         }
 
-        
-       
     }
     
 }
